@@ -17,6 +17,11 @@ target_enable_strict_warnings(project_warnings)
 
 add_library(project_options INTERFACE)
 target_enable_build_type_options(project_options)
+target_link_libraries(project_options INTERFACE
+    sdsl
+    divsufsort
+    divsufsort64
+)
 
 add_subdirectory(src)
 add_subdirectory(apps)

@@ -1,8 +1,11 @@
 #include <iostream>
-
+#include <sdsl/bit_vectors.hpp>
+#include <sdsl/wavelet_trees.hpp>
 #include "core/greeting.hpp"
 
 int main() {
-    std::cout << core::build_greeting("main_app") << '\n';
+    sdsl::bit_vector bv = {1,0,1,1,0};
+    std::cout << bv[1] << std::endl;
+
     return 0;
 }
