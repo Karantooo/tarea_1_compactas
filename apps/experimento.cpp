@@ -20,6 +20,8 @@
 #include <sdsl/wavelet_trees.hpp>
 
 #include "wtree.hpp"
+#include "fm_index_wavelet.hpp"
+#include "utils.hpp"
 
 #include <array>
 #include <cstdint>
@@ -133,156 +135,7 @@ array<size_t, 257> build_C_table(const string& text) {
     return C;
 }
 
-// ============================================================
-// 4. Interfaz común para Occ(v, k)
-// ============================================================
 
-class RankStructure {
-public:
-    virtual ~RankStructure() = default;
-
-    // rank(c, k) = ocurrencias de c en BWT[0..k-1].
-    // Es decir, k es largo de prefijo, NO índice inclusivo.
-    virtual size_t rank(uint32_t c, size_t k) const = 0;
-    virtual string name() const = 0;
-};
-
-// ============================================================
-// 5. SDSL persistente en disco
-// ============================================================
-
-template <typename FMIndexType>
-class SdslRank final : public RankStructure {
-private:
-    FMIndexType fm_index_;
-    string name_;
-
-public:
-    SdslRank(const string& text, const string& index_path, string name)
-        : name_(std::move(name)) {
-
-        if (filesystem::exists(index_path)) {
-            cerr << "[INFO] Cargando índice desde disco: " << index_path << '\n';
-            if (!load_from_file(fm_index_, index_path)) {
-                throw runtime_error("No se pudo cargar el índice: " + index_path);
-            }
-        } else {
-            cerr << "[INFO] Construyendo índice: " << name_ << '\n';
-            construct_im(fm_index_, text, 1);
-
-            cerr << "[INFO] Guardando índice en disco: " << index_path << '\n';
-            if (!store_to_file(fm_index_, index_path)) {
-                throw runtime_error("No se pudo guardar el índice: " + index_path);
-            }
-        }
-    }
-
-    size_t rank(uint32_t c, size_t k) const override {
-        return fm_index_.wavelet_tree.rank(k, static_cast<unsigned char>(c));
-    }
-
-    string name() const override {
-        return name_;
-    }
-};
-
-// ============================================================
-// 6. Wavelet Tree del laboratorio
-// ============================================================
-
-class LabWaveletRank final : public RankStructure {
-private:
-    mutable CDS_UDEC::WaveletTree wt_;  // 🔥 clave
-
-public:
-    explicit LabWaveletRank(vector<uint32_t> bwt)
-        : wt_(bwt) {}
-
-    size_t rank(uint32_t c, size_t k) const override {
-        if (k == 0) return 0;
-        return wt_.rank(c, static_cast<uint32_t>(k - 1));
-    }
-    string name() const override {
-        return "lab_wt";
-    }
-};
-
-// ============================================================
-// 7. Brute force
-// ============================================================
-
-class BruteRank final : public RankStructure {
-private:
-    vector<uint32_t> bwt_;
-
-public:
-    explicit BruteRank(vector<uint32_t> bwt)
-        : bwt_(std::move(bwt)) {}
-
-    size_t rank(uint32_t c, size_t k) const override {
-        if (k > bwt_.size()) {
-            k = bwt_.size();
-        }
-
-        size_t counter = 0;
-        for (size_t i = 0; i < k; ++i) {
-            if (bwt_[i] == c) {
-                ++counter;
-            }
-        }
-
-        return counter;
-    }
-
-    string name() const override {
-        return "brute";
-    }
-};
-
-// ============================================================
-// 8. FM-index count propio usando RankStructure
-// ============================================================
-
-class FMIndexCount {
-private:
-    array<size_t, 257> C_{};
-    const RankStructure& rank_;
-
-public:
-    FMIndexCount(array<size_t, 257> C, const RankStructure& rank)
-        : C_(C), rank_(rank) {}
-
-    size_t count(const string& pattern) const {
-        if (pattern.empty()) {
-            return 0;
-        }
-
-        // Si algún símbolo del patrón no aparece en el texto, count = 0.
-        for (unsigned char c : pattern) {
-            if (C_[c] == C_[static_cast<size_t>(c) + 1]) {
-                return 0;
-            }
-        }
-
-        int i = static_cast<int>(pattern.size()) - 1;
-        uint32_t v = static_cast<unsigned char>(pattern[i]);
-
-        // Intervalo semiabierto [sp, ep).
-        size_t sp = C_[v];
-        size_t ep = C_[v + 1];
-
-        while (sp < ep && i >= 1) {
-            v = static_cast<unsigned char>(pattern[i - 1]);
-
-            sp = C_[v] + rank_.rank(v, sp);
-            ep = C_[v] + rank_.rank(v, ep);
-
-            --i;
-        }
-
-        return ep > sp ? ep - sp : 0;
-    }
-};
 
 // ============================================================
 // 9. Factory de implementaciones
