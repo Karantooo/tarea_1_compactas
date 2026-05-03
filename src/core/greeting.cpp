@@ -1,4 +1,4 @@
-#include "core/greeting.hpp"
+#include "greeting.hpp"
 
 namespace core {
 

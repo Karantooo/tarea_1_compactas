@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sdsl/bit_vectors.hpp>
 #include <sdsl/wavelet_trees.hpp>
-#include "core/greeting.hpp"
+#include "greeting.hpp"
 
 int main() {
     sdsl::bit_vector bv = {1,0,1,1,0};

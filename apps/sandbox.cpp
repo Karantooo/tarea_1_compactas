@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "core/greeting.hpp"
+#include "greeting.hpp"
 
 int main() {
     std::cout << core::build_greeting("sandbox_app") << '\n';

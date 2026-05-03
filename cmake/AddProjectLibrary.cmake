@@ -12,7 +12,7 @@ function(add_project_library lib_name)
 
     target_include_directories(${lib_name}
         PUBLIC
-            ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_SOURCE_DIR}/include/core
     )
 
     target_link_libraries(${lib_name}

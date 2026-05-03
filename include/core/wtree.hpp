@@ -1,5 +1,5 @@
 #pragma once
-#include "bitvector-lib/bitvector.hpp"
+#include "bitvector.hpp"
 #include <cmath>
 namespace CDS_UDEC {
   class WaveletTree

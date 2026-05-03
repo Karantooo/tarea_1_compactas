@@ -9,3 +9,7 @@ add_project_executable(sandbox_app
 add_project_executable(ejemplo
     SOURCES ejemplo_2.cpp
 )
+
+add_project_executable(experimento
+    SOURCES experimento.cpp
+)
