@@ -10,7 +10,7 @@
 //   brute           -> rank lineal sobre BWT explícita
 //
 // Salida:
-//   kind;text_path;pattern;count
+//   kind;text_path;pattern;count;time_ns
 //
 // Nota:
 //   Este archivo se enfoca en count(T, P). Para el informe experimental,
@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <chrono>
 
 using namespace std;
 using namespace sdsl;
@@ -208,12 +209,18 @@ int main(int argc, char** argv) {
             make_rank_structure(kind, text, text_path);
 
         FMIndexCount fm_count(C, *rank_structure);
+
+        const auto t_start = chrono::high_resolution_clock::now();
         const size_t occs = fm_count.count(pattern);
+        const auto t_end = chrono::high_resolution_clock::now();
+        
+        const auto elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(t_end - t_start).count();
 
         cout << rank_structure->name() << ';'
              << text_path << ';'
              << pattern << ';'
-             << occs << '\n';
+             << occs << ';'
+             << elapsed_ns; // << '\n';
 
     } catch (const exception& e) {
         cerr << "[ERROR] " << e.what() << '\n';
