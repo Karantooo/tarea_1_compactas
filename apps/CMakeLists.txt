@@ -10,8 +10,12 @@ add_project_executable(ejemplo
     SOURCES ejemplo_2.cpp
 )
 
-add_project_executable(experimento
-    SOURCES experimento.cpp
+add_project_executable(exp_pat_fijo
+    SOURCES exp_pat_fijo.cpp
+)
+
+add_project_executable(exp_txt_fijo
+    SOURCES exp_txt_fijo.cpp
 )
 
 add_project_executable(archivos_subset
