@@ -13,3 +13,7 @@ add_project_executable(ejemplo
 add_project_executable(experimento
     SOURCES experimento.cpp
 )
+
+add_project_executable(archivos_subset
+    SOURCES archivos_subset.cpp
+)

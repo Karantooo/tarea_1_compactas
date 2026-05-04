@@ -214,7 +214,7 @@ int main(int argc, char** argv) {
         const size_t occs = fm_count.count(pattern);
         const auto t_end = chrono::high_resolution_clock::now();
         
-        const auto elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(t_end - t_start).count();
+        const auto elapsed_ns = chrono::duration_cast<chrono::milliseconds>(t_end - t_start).count();
 
         cout << rank_structure->name() << ';'
              << text_path << ';'

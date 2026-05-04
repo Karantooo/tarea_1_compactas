@@ -73,3 +73,7 @@ Testing/
 *.sublime-project
 *.idea/
 *.vscode/
+
+
+*.csv
+datasets/*
