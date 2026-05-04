@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Configuración de rutas
-EXECUTABLE="./build/debug/apps/experimento"
-DATA_DIR="./datasets"
+EXECUTABLE="./build/release/apps/experimento"
+DATA_DIR="./textos"
 RESULTS_DIR="./results"
 CSV_OUT="$RESULTS_DIR/experiment_results.csv"
 

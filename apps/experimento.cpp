@@ -210,17 +210,25 @@ int main(int argc, char** argv) {
 
         FMIndexCount fm_count(C, *rank_structure);
 
-        const auto t_start = chrono::high_resolution_clock::now();
-        const size_t occs = fm_count.count(pattern);
-        const auto t_end = chrono::high_resolution_clock::now();
-        
-        const auto elapsed_ns = chrono::duration_cast<chrono::milliseconds>(t_end - t_start).count();
+        double t_mean = 0;
+        size_t N_RUNS = 32;
+        size_t occs;
+
+        for (size_t i = 0; i < N_RUNS; i++) {
+            const auto t_start = chrono::high_resolution_clock::now();
+            occs = fm_count.count(pattern);
+            const auto t_end = chrono::high_resolution_clock::now();
+            const auto elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(t_end - t_start).count();
+            t_mean += (double)elapsed_ns;
+        }
+
+        t_mean /= (double)N_RUNS;
 
         cout << rank_structure->name() << ';'
              << text_path << ';'
              << pattern << ';'
              << occs << ';'
-             << elapsed_ns; // << '\n';
+             << t_mean; // << '\n';
 
     } catch (const exception& e) {
         cerr << "[ERROR] " << e.what() << '\n';

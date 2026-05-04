@@ -53,7 +53,7 @@ for p in "${PERCENTS[@]}"; do
 done
 
 # Localizar ejecutable de subset
-MK_SUBSET="${ROOT_DIR}/archivos_subset.out"
+MK_SUBSET="${ROOT_DIR}/build/release/apps/archivos_subset"
 if ! [[ -x "$MK_SUBSET" ]]; then
   echo "ERROR: archivos_subset.out no encontrado. Compila con: make archivos_subset.out"
   exit 6
