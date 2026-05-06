@@ -2,7 +2,7 @@
 
 # Configuración
 EXECUTABLE="./build/release/apps/exp_txt_fijo"
-DATA_DIR="./dataset"
+DATA_DIR="./datasets/experiment_txt_fijo"
 RESULTS_DIR="./results"
 CSV_OUT="$RESULTS_DIR/exp_txt_fijo_results.csv"
 TEMP_MEM=".temp_mem_fijo.log"
@@ -17,6 +17,7 @@ KINDS=("sdsl_huff_rrr" "sdsl_blcd" "lab_wt" "brute")
 # Tamaños de patron
 SIZES=(32 64 128 256 512)
 
+REPEATS=32
 
 for text_file in "$DATA_DIR"/*; do
     if [ -f "$text_file" ] && [[ "$text_file" != *.fm ]]; then
@@ -24,10 +25,17 @@ for text_file in "$DATA_DIR"/*; do
         
         for kind in "${KINDS[@]}"; do
             for size in "${SIZES[@]}"; do
-                echo "Ejecutando: $filename | Kind: $kind | Size: $size"
-                OUTPUT=$({ /usr/bin/time -v "$EXECUTABLE" "$text_file" "$size" "$kind" 2> "$TEMP_MEM"; } >> /dev/stdout)
-                MEM_KB=$(grep "Maximum resident set size" "$TEMP_MEM" | awk '{print $6}')        
-                echo "${OUTPUT};${MEM_KB}" >> "$CSV_OUT"
+                for ((i=1; i<=REPEATS; i++)); do
+                    
+                    echo "Ejecutando: $filename | Kind: $kind | Size: $size | Run: $i"
+
+                    OUTPUT=$({ /usr/bin/time -v "$EXECUTABLE" "$text_file" "$size" "$kind" 2> "$TEMP_MEM"; } >> /dev/stdout)
+
+                    MEM_KB=$(grep "Maximum resident set size" "$TEMP_MEM" | awk '{print $6}')        
+
+                    echo "${OUTPUT};${MEM_KB}" >> "$CSV_OUT"
+
+                done
             done
         done
     fi
