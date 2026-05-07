@@ -10,7 +10,7 @@ TEMP_MEM=".temp_mem_fijo.log"
 mkdir -p "$RESULTS_DIR"
 
 # Encabezado del CSV
-echo "kind;text_path;patt_size;mode;count;time_ns;max_memory_kb" > "$CSV_OUT"
+echo "kind;text_path;patt_size;mode;count;time_ns;max_memory_kb;variance" > "$CSV_OUT"
 
 KINDS=("sdsl_huff_rrr" "sdsl_blcd" "lab_wt" "brute")
 

@@ -214,21 +214,33 @@ int main(int argc, char** argv) {
         size_t N_RUNS = 32;
         size_t occs;
 
+        vector<double> times_ns;
+        times_ns.reserve(N_RUNS);
+
         for (size_t i = 0; i < N_RUNS; i++) {
             const auto t_start = chrono::high_resolution_clock::now();
             occs = fm_count.count(pattern);
             const auto t_end = chrono::high_resolution_clock::now();
             const auto elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(t_end - t_start).count();
+            
+            times_ns.push_back((double)elapsed_ns);
             t_mean += (double)elapsed_ns;
         }
 
         t_mean /= (double)N_RUNS;
 
+        double variance = 0;
+        for (double t : times_ns) {
+            variance += (t - t_mean) * (t - t_mean);
+        }
+        variance /= (double)(N_RUNS - 1);
+
         cout << rank_structure->name() << ';'
              << text_path << ';'
              << pattern << ';'
              << occs << ';'
-             << t_mean; // << '\n';
+             << t_mean << ';'
+             << variance; 
 
     } catch (const exception& e) {
         cerr << "[ERROR] " << e.what() << '\n';

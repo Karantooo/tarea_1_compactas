@@ -216,6 +216,9 @@ int main(int argc, char** argv) {
         size_t N_RUNS = 32;
         size_t occs;
 
+        vector<double> times_ns;
+        times_ns.reserve(N_RUNS);
+
         if (text.size() < patt_size) {
             throw runtime_error("El texto es demasiado corto para el experimento (min " + to_string(patt_size) + " chars).");
         }
@@ -241,17 +244,26 @@ int main(int argc, char** argv) {
             const auto t_end = chrono::high_resolution_clock::now();
             
             auto elapsed_ns = chrono::duration_cast<chrono::nanoseconds>(t_end - t_start).count();
+            
+            times_ns.push_back((double)elapsed_ns);
             t_mean += (double)elapsed_ns;
         }
 
         t_mean /= (double)N_RUNS;
+
+        double variance = 0;
+        for (double t : times_ns) {
+            variance += (t - t_mean) * (t - t_mean);
+        }
+        variance /= (double)(N_RUNS - 1);
 
         cout << rank_structure->name() << ';'
             << text_path << ';'
             << patt_size << ';'
             << mode << ';'
             << occs << ';'
-            << t_mean;
+            << t_mean << ';'
+            << variance;
 
     } catch (const exception& e) {
         cerr << "[ERROR] " << e.what() << '\n';

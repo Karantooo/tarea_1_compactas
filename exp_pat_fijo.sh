@@ -6,12 +6,12 @@ DATA_DIR="./datasets/experiment_pat_fijo"
 RESULTS_DIR="./results"
 CSV_OUT="$RESULTS_DIR/exp_pat_fijo_results.csv"
 TEMP_MEM=".temp_mem.log"
-PATTERN="questions" 
+PATTERN="GAT" 
 
 mkdir -p "$RESULTS_DIR"
 
 # Encabezado del csv
-echo "kind;text_path;pattern;count;time_ns;max_memory_kb" > "$CSV_OUT"
+echo "kind;text_path;pattern;count;time_ns;max_memory_kb;variance" > "$CSV_OUT"
 
 KINDS=("sdsl_huff_rrr" "sdsl_blcd" "lab_wt" "brute")
 
