@@ -1,7 +1,7 @@
 // src/fm_experimento_1.cpp
 //
 // Uso:
-//   ./fm_experimento_1 <text_path> <patt_size> <kind>
+//   ./fm_experimento_1 <text_path> <patt_size> <kind> <hit|miss>
 //
 // kind:
 //   sdsl_huff_rrr   -> csa_wt<wt_huff<rrr_vector<127>>, 512, 1024>
@@ -187,9 +187,9 @@ unique_ptr<RankStructure> make_rank_structure(
 // ============================================================
 
 int main(int argc, char** argv) {
-    if (argc < 4) {
+    if (argc < 5) {
         cerr << "Uso:\n"
-             << "  " << argv[0] << " <text_path> <patt_size> <kind> \n\n"
+             << "  " << argv[0] << " <text_path> <patt_size> <kind> <hit|miss> \n\n"
              << "kind:\n"
              << "  sdsl_huff_rrr\n"
              << "  sdsl_blcd\n"
@@ -202,6 +202,7 @@ int main(int argc, char** argv) {
         const string text_path = argv[1];
         const size_t patt_size = stoul(argv[2]);
         const string kind = argv[3];
+        const string mode = argv[4];
 
         const string text = read_text_file_sanitized(text_path);
         const auto C = build_C_table(text);
@@ -221,10 +222,18 @@ int main(int argc, char** argv) {
 
         random_device rd;
         mt19937 gen(rd());
-        uniform_int_distribution<size_t> dist(0, text.size() - patt_size);
-        size_t start_pos = dist(gen);
 
-        string pattern = text.substr(start_pos, patt_size);
+        string pattern;
+
+        if (mode == "hit") {
+            uniform_int_distribution<size_t> dist(0, text.size() - patt_size);
+            size_t start_pos = dist(gen);
+            pattern = text.substr(start_pos, patt_size);
+        } else if (mode == "miss") {
+            pattern = string(patt_size, '\0');
+        } else {
+            throw invalid_argument("Modo inválido: " + mode + ". Usa hit o miss.");
+        }
 
         for (size_t i = 0; i < N_RUNS; i++) {
             const auto t_start = chrono::high_resolution_clock::now();
@@ -238,10 +247,11 @@ int main(int argc, char** argv) {
         t_mean /= (double)N_RUNS;
 
         cout << rank_structure->name() << ';'
-             << text_path << ';'
-             << patt_size << ';'
-             << occs << ';'
-             << t_mean;
+            << text_path << ';'
+            << patt_size << ';'
+            << mode << ';'
+            << occs << ';'
+            << t_mean;
 
     } catch (const exception& e) {
         cerr << "[ERROR] " << e.what() << '\n';
