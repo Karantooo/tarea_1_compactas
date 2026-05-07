@@ -15,7 +15,7 @@ echo "kind;text_path;pattern;count;time_ns;max_memory_kb" > "$CSV_OUT"
 
 KINDS=("sdsl_huff_rrr" "sdsl_blcd" "lab_wt" "brute")
 
-REPEATS=32
+REPEATS=1
 
 for text_file in "$DATA_DIR"/*; do
     if [ -f "$text_file" ] && [[ "$text_file" != *.fm ]]; then

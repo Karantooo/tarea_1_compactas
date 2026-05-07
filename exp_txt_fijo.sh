@@ -20,7 +20,7 @@ SIZES=(2 4 8 16 32 64 128 256 512)
 # Modos de experimento
 MODES=("hit" "miss")
 
-REPEATS=32
+REPEATS=1
 
 for text_file in "$DATA_DIR"/*; do
     if [ -f "$text_file" ] && [[ "$text_file" != *.fm ]]; then

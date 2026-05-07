@@ -9,7 +9,8 @@ OUTPUT_DIR="${ROOT_DIR}/datasets/experiment_pat_fijo"
 
 # Defaults (se usan si no pasas args)
 PERCENTS=(0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0)
-PATHS=("${ROOT_DIR}/datasets/experiment_txt_fijo/mio_cid.txt")
+DATASET_ROUT="${ROOT_DIR}/datasets/experiment_txt_fijo"
+PATHS=("${DATASET_ROUT}/sources.200MB" "${DATASET_ROUT}/english.1024MB" "${DATASET_ROUT}/dna.200MB")
 
 if [[ $# -gt 0 ]]; then
   # Si hay args, parseamos y SOBREESCRIBIMOS los defaults
