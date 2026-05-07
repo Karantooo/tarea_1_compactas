@@ -6,7 +6,6 @@ DATA_DIR="./datasets/experiment_pat_fijo"
 RESULTS_DIR="./results"
 CSV_OUT="$RESULTS_DIR/exp_pat_fijo_results.csv"
 TEMP_MEM=".temp_mem.log"
-PATTERN="GAT" 
 
 mkdir -p "$RESULTS_DIR"
 
@@ -20,6 +19,16 @@ REPEATS=1
 for text_file in "$DATA_DIR"/*; do
     if [ -f "$text_file" ] && [[ "$text_file" != *.fm ]]; then
         filename=$(basename "$text_file")
+
+        if [[ "$filename" == *dna* ]]; then
+            PATTERN="GAT"
+        elif [[ "$filename" == *sources* ]]; then
+            PATTERN="int"
+        elif [[ "$filename" == *english* ]]; then
+            PATTERN="the"
+        else
+            PATTERN="default" 
+        fi
         
         for kind in "${KINDS[@]}"; do
             for ((i=1; i<=REPEATS; i++)); do
